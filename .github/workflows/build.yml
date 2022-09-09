@@ -59,9 +59,9 @@ jobs:
       - name: Установка зависимостей
         run: sudo apt-get install -y poppler-utils
       - name: Получение публичного резюме
-        uses: dsaltares/fetch-gh-release-asset@master
+        uses: actions/download-artifact@v2
         with:
-          file: cv_kottsov_public.pdf
+          name: cv_kottsov_public.pdf
       - name: Создание превью
         run: pdftoppm cv_kottsov_public.pdf preview -png -r 300
       - name: Сохранение
