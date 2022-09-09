@@ -19,11 +19,13 @@ jobs:
         uses: xu-cheng/latex-action@v2
         with:
           root_file: main.tex
+      - name: Перемещение
+        run: mv main.pdf cv_kottsov_public.pdf
       - name: Сохранение
         uses: actions/upload-artifact@v3
         with:
           name: cv_kottsov_public.pdf
-          path: main.pdf
+          path: cv_kottsov_public.pdf
   build_private:
     runs-on: ubuntu-latest
     steps:
@@ -49,6 +51,7 @@ jobs:
       - name: Сохранение
         uses: actions/upload-artifact@v3
         with:
+          name: cv_kottsov_private.zip
           path: cv_kottsov_private.zip
   preview:
     needs: build_public
@@ -62,7 +65,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: cv_kottsov_public.pdf
-      - run: ls -R
       - name: Создание превью
         run: pdftoppm cv_kottsov_public.pdf preview -png -r 300
       - name: Сохранение
