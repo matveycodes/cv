@@ -78,6 +78,7 @@ jobs:
     steps:
       - name: Получение артефактов
         uses: actions/download-artifact@v3
+      - run: ls -R
       - name: Получение текущей отметки времени
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M-%S')"
