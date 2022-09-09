@@ -74,9 +74,9 @@ jobs:
         uses: actions/download-artifact@v3
       - name: Перемещение артефактов
         run: |
-          mv cv_kottsov_private.zip/cv_kottsov_private.zip cv_kottsov_private.zip
-          mv cv_kottsov_public.pdf/cv_kottsov_public.pdf cv_kottsov_public.pdf
-          mv preview.png/preview.png preview.png
+          cp -a cv_kottsov_private.zip/. .
+          cp -a cv_kottsov_public.pdf/. .
+          cp -a preview.png/. .
       - name: Получение текущей отметки времени
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M-%S')"
