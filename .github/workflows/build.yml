@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Настройка репозитория
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
       - name: Установка временной зоны системы
         uses: szenius/set-timezone@v1.0
         with:
@@ -20,7 +20,7 @@ jobs:
         with:
           root_file: main.tex
       - name: Сохранение
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3
         with:
           name: cv_kottsov_public.pdf
           path: main.pdf
@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Настройка репозитория
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
       - name: Установка временной зоны системы
         uses: szenius/set-timezone@v1.0
         with:
@@ -47,7 +47,7 @@ jobs:
       - name: Архивирование
         run: zip -P ${{ secrets.PRIVATE_PASSWORD }} cv_kottsov_private.zip cv_kottsov_private.pdf
       - name: Сохранение
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3
         with:
           path: cv_kottsov_private.zip
   preview:
@@ -55,17 +55,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Настройка репозитория
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
       - name: Установка зависимостей
         run: sudo apt-get install -y poppler-utils
       - name: Получение публичного резюме
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: cv_kottsov_public.pdf
       - name: Создание превью
         run: pdftoppm cv_kottsov_public.pdf preview -png -r 300
       - name: Сохранение
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3
         with:
           path: preview.png
   release:
