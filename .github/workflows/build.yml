@@ -48,13 +48,15 @@ jobs:
       - name: Настройка репозитория
         uses: actions/checkout@v3
       - name: Установка зависимостей
-        run: sudo apt-get install -y poppler-utils
+        run: sudo apt-get install -y poppler-utils imagemagick
       - name: Получение публичного резюме
         uses: actions/download-artifact@v3
         with:
           name: cv_kottsov_public.pdf
       - name: Создание превью
-        run: pdftoppm -png -f 1 -l 1 -r 300 cv_kottsov_public.pdf preview && mv preview-1.png preview.png
+        run: |
+          pdftoppm -png -r 300 cv_kottsov_public.pdf preview
+          convert -append preview-*.png preview.png
       - name: Сохранение
         uses: actions/upload-artifact@v3
         with:
