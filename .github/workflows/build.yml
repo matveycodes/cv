@@ -67,10 +67,12 @@ jobs:
           name: cv_kottsov_public.pdf
       - name: Создание превью
         run: pdftoppm cv_kottsov_public.pdf preview -png -r 300
+        run: pdftoppm -png -f 1 -l 1 -r 300 cv_kottsov_public.pdf preview
       - name: Сохранение
         uses: actions/upload-artifact@v3
         with:
-          path: preview.png
+          name: preview.png
+          path: preview-01.png
   release:
     runs-on: ubuntu-latest
     needs: [build_public, build_private, preview]
