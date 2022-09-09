@@ -19,8 +19,11 @@ jobs:
         uses: xu-cheng/latex-action@v2
         with:
           root_file: main.tex
-      - name: Перемещение
-        run: mv main.pdf cv_kottsov_public.pdf
+      - name: Сохранение
+        uses: actions/upload-artifact@master
+        with:
+          name: cv_kottsov_public.pdf
+          path: main.pdf
   build_private:
     runs-on: ubuntu-latest
     steps:
@@ -43,6 +46,10 @@ jobs:
         run: mv main.pdf cv_kottsov_private.pdf
       - name: Архивирование
         run: zip -P ${{ secrets.PRIVATE_PASSWORD }} cv_kottsov_private.zip cv_kottsov_private.pdf
+      - name: Сохранение
+        uses: actions/upload-artifact@master
+        with:
+          path: cv_kottsov_private.zip
   preview:
     needs: build_public
     runs-on: ubuntu-latest
@@ -57,10 +64,16 @@ jobs:
           file: cv_kottsov_public.pdf
       - name: Создание превью
         run: pdftoppm cv_kottsov_public.pdf preview -png -r 300
+      - name: Сохранение
+        uses: actions/upload-artifact@master
+        with:
+          path: preview.png
   release:
     runs-on: ubuntu-latest
     needs: [build_public, build_private, preview]
     steps:
+      - name: Получение артефактов
+        uses: actions/download-artifact@v3
       - name: Получение текущей отметки времени
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M-%S')"
