@@ -62,6 +62,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: cv_kottsov_public.pdf
+      - run: ls -R
       - name: Создание превью
         run: pdftoppm cv_kottsov_public.pdf preview -png -r 300
       - name: Сохранение
