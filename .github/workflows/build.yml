@@ -1,0 +1,44 @@
+name: Сборка резюме
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Настройка репозитория
+        uses: actions/checkout@v1
+      - name: Установка временной зоны системы
+        uses: szenius/set-timezone@v1.0
+        with:
+          timezoneLinux: "Europe/Moscow"
+          timezoneMacos: "Europe/Moscow"
+          timezoneWindows: "Russian Standard Time"
+      - name: Компиляция публичной версии
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: main.tex
+      - name: Перемещение публичной версии
+        run: mv main.pdf cv_kottsov_public.pdf
+      - name: Компиляция приватной версии
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: main.tex
+          pre_compile: (echo "\\newcommand{\\privatecontact}{$PRIVATE_CONTACT}" && cat main.tex) > _main.tex && mv _main.tex main.tex
+        env:
+          PRIVATE_CONTACT: ${{ secrets.PRIVATE_CONTACT }}
+      - name: Перемещение приватной версии
+        run: mv main.pdf cv_kottsov_private.pdf
+      - name: Архивирование приватной версии
+        run: zip -P ${{ secrets.PRIVATE_PASSWORD }} cv_kottsov_private.zip cv_kottsov_private.pdf
+      - name: Получение текущей отметки времени
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M-%S')"
+      - name: Создание релиза
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.date.outputs.date }}
+          files: |
+            cv_kottsov_public.pdf
+            cv_kottsov_private.zip
