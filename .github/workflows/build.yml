@@ -76,7 +76,7 @@ jobs:
         uses: actions/download-artifact@v3
       - name: Получение текущей отметки времени
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M-%S')"
+        run: echo "::set-output name=date::$(date +'%d.%m.%Y_%H-%M-%S')"
       - name: Создание релиза
         uses: softprops/action-gh-release@v1
         with:
