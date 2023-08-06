@@ -1,0 +1,87 @@
+name: Сборка резюме
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build_public:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Настройка репозитория
+        uses: actions/checkout@v3
+      - name: Компиляция
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: main.tex
+      - name: Перемещение
+        run: mv main.pdf cv_kottsov_public.pdf
+      - name: Сохранение
+        uses: actions/upload-artifact@v3
+        with:
+          name: cv_kottsov_public.pdf
+          path: cv_kottsov_public.pdf
+  build_private:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Настройка репозитория
+        uses: actions/checkout@v3
+      - name: Компиляция
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: main.tex
+          pre_compile: (echo "\\newcommand{\\privatecontact}{$PRIVATE_CONTACT}" && cat main.tex) > _main.tex && mv _main.tex main.tex
+        env:
+          PRIVATE_CONTACT: ${{ secrets.PRIVATE_CONTACT }}
+      - name: Перемещение
+        run: mv main.pdf cv_kottsov_private.pdf
+      - name: Архивирование
+        run: zip -P ${{ secrets.PRIVATE_PASSWORD }} cv_kottsov_private.zip cv_kottsov_private.pdf
+      - name: Сохранение
+        uses: actions/upload-artifact@v3
+        with:
+          name: cv_kottsov_private.zip
+          path: cv_kottsov_private.zip
+  preview:
+    needs: build_public
+    runs-on: ubuntu-latest
+    steps:
+      - name: Настройка репозитория
+        uses: actions/checkout@v3
+      - name: Установка зависимостей
+        run: sudo apt-get install -y poppler-utils imagemagick
+      - name: Получение публичного резюме
+        uses: actions/download-artifact@v3
+        with:
+          name: cv_kottsov_public.pdf
+      - name: Создание превью
+        run: |
+          pdftoppm -png -r 300 cv_kottsov_public.pdf preview
+          convert -append preview-*.png preview.png
+      - name: Сохранение
+        uses: actions/upload-artifact@v3
+        with:
+          name: preview.png
+          path: preview.png
+  release:
+    runs-on: ubuntu-latest
+    needs: [build_public, build_private, preview]
+    steps:
+      - name: Установка временной зоны системы
+        uses: szenius/set-timezone@v1.0
+        with:
+          timezoneLinux: "Europe/Moscow"
+          timezoneMacos: "Europe/Moscow"
+          timezoneWindows: "Russian Standard Time"
+      - name: Получение артефактов
+        uses: actions/download-artifact@v3
+      - name: Получение текущей отметки времени
+        id: date
+        run: echo "::set-output name=date::$(date +'%d.%m.%Y_%H%M%S')"
+      - name: Создание релиза
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.date.outputs.date }}
+          files: |
+            cv_kottsov_public.pdf/cv_kottsov_public.pdf
+            cv_kottsov_private.zip/cv_kottsov_private.zip
+            preview.png/preview.png

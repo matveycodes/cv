@@ -1,0 +1,57 @@
+\ProvidesPackage{mycv}
+
+\usepackage[a4paper, margin=1.25cm]{geometry}
+\usepackage[T2A]{fontenc}
+\usepackage[english, russian]{babel}
+\usepackage{hyphenat}
+\usepackage[hidelinks]{hyperref}
+\usepackage[document]{ragged2e}
+\usepackage{titlesec}
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{anyfontsize}
+\usepackage{fontawesome}
+\usepackage{graphicx}
+\usepackage{microtype}
+
+% Отключение нумерации страниц
+\pagenumbering{gobble}
+
+% Межстрочный интервал
+\linespread{1.25}
+
+\setlist[itemize]{
+    align=parleft,
+    left=0pt..1em,
+    itemsep=-.25em,
+}
+
+% Линия после заголовка
+\titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}[{\titlerule[0.8pt]}]
+
+% Уменьшает размер буллетов
+\renewcommand\labelitemi{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\skill}[1]{\texttt{#1}}
+
+\newcommand{\aside}[2]{
+    \begin{minipage}[t]{0.3\textwidth}
+        #1
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.7\textwidth}
+        #2
+    \end{minipage}
+    \vspace{.5em}
+}
+
+\newcommand{\experience}[4]{
+    \aside
+    {\textit{#1}\\#2}
+    {{\textbf{\fontsize{11pt}{0pt}\selectfont #3}}\\#4}
+}
+
+\newcommand{\visiblelink}[2]{\underline{\href{#1}{#2}}}
+
+\endinput
