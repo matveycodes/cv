@@ -48,7 +48,7 @@ jobs:
       - name: Настройка репозитория
         uses: actions/checkout@v3
       - name: Установка зависимостей
-        run: sudo apt-get install -y poppler-utils imagemagick
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils imagemagick
       - name: Получение публичного резюме
         uses: actions/download-artifact@v3
         with:
